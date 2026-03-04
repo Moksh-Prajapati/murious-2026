@@ -363,9 +363,9 @@
     const heroContent = document.querySelector('.hero-content');
     
     const sections = Array.from(document.querySelectorAll('.section'));
-    const maxStep = sections.length; 
     let step = 0;
     let isLocked = false;
+    let scrollLockActive = true;   
 
     function lockFor(ms) {
       isLocked = true;
@@ -404,29 +404,27 @@
 
     function goTo(newStep) {
       if (isLocked) return;
-      newStep = Math.max(0, Math.min(maxStep, newStep));
+      newStep = Math.max(0, Math.min(2, newStep));
       if (newStep === step) return;
-      const prevStep = step;
       step = newStep;
 
       if (step === 0) {
-        
+        // Home — castle down, hero visible
         setCastleState(false);
         window.scrollTo({ top: 0 });
         lockFor(900);
+        scrollLockActive = true;
       } else if (step === 1) {
-        // Castle rises up, text blurs
+        // Castle rises, hero text fades
         setCastleState(true);
         window.scrollTo({ top: 0 });
         lockFor(900);
+        scrollLockActive = true;
       } else {
-        
-        const prevStep = step;
-        const target = sections[step - 1];
+        const target = sections[1]; 
         if (target) {
           const container = target.querySelector('.section-container');
-          // Only blur when coming from castle (step 1 → step 2)
-          if (prevStep === 1 && container) {
+          if (container) {
             container.classList.add('section-entering');
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             setTimeout(() => container.classList.remove('section-entering'), 350);
@@ -435,6 +433,7 @@
           }
         }
         lockFor(900);
+        setTimeout(() => { scrollLockActive = false; }, 900);
       }
     }
 
@@ -444,6 +443,7 @@
   // ════════════════════════════════════════════════════
     
     window.addEventListener('wheel', (e) => {
+      if (!scrollLockActive) return;   
       e.preventDefault();
       if (e.deltaY > 8)       goTo(step + 1);
       else if (e.deltaY < -8) goTo(step - 1);
@@ -451,6 +451,7 @@
 
     // ── Keyboard ──
     window.addEventListener('keydown', (e) => {
+      if (!scrollLockActive) return;
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
         e.preventDefault();
         goTo(step + 1);
@@ -466,10 +467,20 @@
       touchStartY = e.touches[0].clientY;
     }, { passive: true });
     window.addEventListener('touchend', (e) => {
+      if (!scrollLockActive) return;
       const delta = touchStartY - e.changedTouches[0].clientY;
       if (delta > 40)       goTo(step + 1);
       else if (delta < -40) goTo(step - 1);
     });
+
+    // ── Re-engage lock for castle animation 
+    window.addEventListener('scroll', () => {
+      if (!scrollLockActive && window.scrollY < 10) {
+        step = 1;
+        scrollLockActive = true;
+        setCastleState(true);
+      }
+    }, { passive: true });
 
     // Init: castle hidden
     setCastleState(false);
