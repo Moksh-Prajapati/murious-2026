@@ -416,7 +416,7 @@
       const rclif = document.querySelector('.hero-clif-right');
       if (risen) {
         const moveUp = windowH * 0.8;
-        castle.style.transform = `translateX(-50%) translateY(-${moveUp}px) scale(2.8)`;
+        castle.style.transform = `translateX(-50%) translateY(-${moveUp}px) scale(2.2)`;
         heroContent.style.filter = 'blur(0px)';
         heroContent.style.opacity = '0';
 
