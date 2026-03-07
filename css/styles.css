@@ -2977,3 +2977,40 @@ TEAM SECTION
     0 0 25px var(--gold-glow);
   transform: translateY(-6px);
 }
+
+/* ═════════════════════════════════
+   MOBILE NAVBAR
+═════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  .nav-toggle {
+    display: flex;
+    z-index: 1100;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -260px;
+    height: 100vh;
+    width: 240px;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(18px);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 100px 30px;
+    gap: 18px;
+    transition: right 0.35s ease;
+  }
+
+  .nav-links.open {
+    right: 0;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+    width: 100%;
+  }
+
+}
